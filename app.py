@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask import session as login_session
-from flask_socketio import SocketIO
 import pyrebase
 from datetime import datetime
 
@@ -92,7 +91,6 @@ def sign_out():
 @app.route('/like/<string:k>', methods=['GET', 'POST'])
 def like(k):
     if request.method == 'POST':
-        
         try:
             likes = {'likes' : db.child('Tweets').child(k).get().val()['likes'] + 1}
             db.child("Tweets").child(k).update(likes)
