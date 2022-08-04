@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask import session as login_session
+from flask_socketio import SocketIO
 import pyrebase
 from datetime import datetime
 
@@ -8,6 +9,7 @@ tweet={}
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = 'super-secret-key'
+socketio = SocketIO(app)
 
 Config = {
   "apiKey": "AIzaSyBW232n5Lnogln0UNFG4cK6D-KScVGfexU",
@@ -67,7 +69,7 @@ def add_tweet():
            db.child("Tweets").push(tweet)
        except:
            print("Couldn't add article")
-    return render_template("add_tweet.html",    tweets2=db.child("Tweets").get().val()
+    return render_template("add_tweet.html",    tweets2=db.child("Tweets").get().val() ,current_user=login_session['user']['localId']
 )
 
 @app.route('/all_tweets', methods=['GET', 'POST'])
@@ -80,7 +82,7 @@ def all_tweet():
         except:
             print("Couldn't add article")
             redirect(url_for('add_tweet'))
-    return render_template("tweets.html",tweets2=db.child("Tweets").get().val(),users=db.child("Users").get().val())
+    return render_template("tweets.html",tweets2=db.child("Tweets").get().val(),users=db.child("Users").get().val(), current_user=login_session['user']['localId'])
 
 @app.route('/sign_out', methods=['GET', 'POST'])
 def sign_out():
@@ -107,8 +109,25 @@ def page(user):
     for x in tweet:
         if(tweet[x]['uid']==user):
            utweets.append(tweet[x])
+    return render_template('user_page.html',tweets2=utweets, length=len(utweets),users=db.child("Users").get().val(),user=user,current_user=login_session['user']['localId'])
 
-    return render_template('user_page.html',tweets2=utweets, length=len(utweets),users=db.child("Users").get().val())
 
+
+
+@app.route('/massage/<string:name>/<string:other>', methods=['GET', 'POST'])
+def massage(name,other):
+    massages=[]
+    if request.method == 'POST':
+       try:
+           now = datetime.now()
+           tweet={"title":request.form['title'],"text":request.form['text'], "uid": login_session['user']['localId'],"time":now.strftime("%d/%m/%Y %H"),"likes":0,"img":request.form['img'] }
+           db.child("Massages").push(tweet)
+           massages.append(tweet)
+       except:
+           print("Couldn't add article")
+    print(massages)
+    return render_template("session.html",    users=db.child("Users").get().val(),len=len(massages),tweets2=massages ,current_user=login_session['user']['localId'],user=name,other=other
+)
 if __name__ == '__main__':
     app.run(debug=True)
+    socketio.run(app, debug=True)
