@@ -8,7 +8,7 @@ tweet={}
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = 'super-secret-key'
-socketio = SocketIO(app)
+
 
 Config = {
   "apiKey": "AIzaSyBW232n5Lnogln0UNFG4cK6D-KScVGfexU",
@@ -128,4 +128,3 @@ def massage(name,other):
 )
 if __name__ == '__main__':
     app.run(debug=True)
-    socketio.run(app, debug=True)
