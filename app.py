@@ -103,6 +103,7 @@ def like(k):
 @app.route('/all_tweets/<string:user>', methods=['GET', 'POST'])
 def page(user):
     utweets=[]
+
     tweet=db.child("Tweets").get().val()
     for x in tweet:
         if(tweet[x]['uid']==user):
@@ -114,17 +115,15 @@ def page(user):
 
 @app.route('/massage/<string:name>/<string:other>', methods=['GET', 'POST'])
 def massage(name,other):
-    massages=[]
-    if request.method == 'POST':
-       try:
-           now = datetime.now()
-           tweet={"title":request.form['title'],"text":request.form['text'], "uid": login_session['user']['localId'],"time":now.strftime("%d/%m/%Y %H"),"likes":0,"img":request.form['img'] }
-           db.child("Massages").push(tweet)
-           massages.append(tweet)
-       except:
-           print("Couldn't add article")
-    print(massages)
-    return render_template("session.html",    users=db.child("Users").get().val(),len=len(massages),tweets2=massages ,current_user=login_session['user']['localId'],user=name,other=other
+    utweets=[]
+    tweet={"title":request.form['title'],"text":request.form['text'], "uido": other,"time":now.strftime("%d/%m/%Y %H"),"likes":0,"img":request.form['img'] }
+    db.child('Massage').push(tweet)
+    tweet=db.child("Massages").get().val()
+    for x in tweet:
+        if(tweet[x]['uid']==name and tweet[x]['uido']==other):
+           utweets.append(tweet[x])
+
+    return render_template("session.html",    users=db.child("Users").get().val(),len=len(utweets),tweets2=utweets ,current_user=login_session['user']['localId'],user=name,other=other
 )
 if __name__ == '__main__':
     app.run(debug=True)
