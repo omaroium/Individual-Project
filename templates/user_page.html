@@ -17,16 +17,12 @@
 	<title></title>
 </head>
 <body>
-<form method="POST" action="/massage/{{user}}/{{current_user}}">
+ 
 	         
-         <input type="submit" id="like" name="submit" value="chat">
-    
-    </form>
-    <form method="POST" action="/massage/{{current_user}}/{{user}}">
-	         
-         <input type="submit" id="like" name="submit" value="chat">
-    
-    </form>
+     <a href="/massage/{{user}}/{{current_user}}"></a>
+
+    <a href="/massage/{{current_user}}/{{user}}"></a> 
+
 
 
 	{%for k in range(0,length)%}
