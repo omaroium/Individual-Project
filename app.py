@@ -21,6 +21,7 @@ Config = {
   "measurementId": "G-NYBE7M8ST7",
   "databaseURL":"https://finally-4dd8f-default-rtdb.europe-west1.firebasedatabase.app/"
 }
+
 firebase=pyrebase.initialize_app(Config)
 auth = firebase.auth()
 db=firebase.database()
